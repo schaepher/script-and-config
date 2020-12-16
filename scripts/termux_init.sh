@@ -23,3 +23,5 @@ termux-wake-lock
 sshd
 """ > ~/.termux/boot/sshd
 
+mkdir -p ~/.ssh
+touch ~/.ssh/authorized_keys
