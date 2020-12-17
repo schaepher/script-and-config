@@ -7,12 +7,14 @@ cd ${basedir}
 curl -L -o npc.tgz https://github.com/ehang-io/nps/releases/download/v0.26.9/linux_arm_v7_client.tar.gz
 tar xvzf npc.tgz
 
-printf "enter server_addr: "
-read the_server_addr
+printf "enter domain or ip: "
+read domain
+printf "enter port: "
+read port
 printf "enter vkey: "
-read the_key
+read key
 
-echo """
+cat > ${basedir}/conf/npc.conf <<EOF
 [common]
 server_addr=the_server_addr
 conn_type=tcp
@@ -29,5 +31,24 @@ crypt=true
 compress=true
 #pprof_addr=0.0.0.0:9999
 disconnect_timeout=60
-""" | sed "s/the_server_addr/${the_server_addr}/" | sed "s/the_key/${the_key}/" > ${basedir}/conf/npc.conf
+EOF
 
+sed -i "s/the_key/${key}/" ${basedir}/conf/npc.conf
+
+# nps 客户端
+cat > ~/.shortcuts/tasks/npc <<`EOF`
+#!/data/data/com.termux/files/usr/bin/sh
+termux-wake-lock
+ip=$(ping -c 1 domain  | head -n 1 | awk '{print $3}' | sed 's/[\(\)]//g')
+sed -i "s/^server_addr=.*\$/server_addr=${ip}:port/g" npc.conf
+~/npc/npc -config ~/npc/conf/npc.conf
+`EOF`
+
+sed -i "s/domain/${domain}/" ~/.shortcuts/tasks/npc
+sed -i "s/port/${port}/" ~/.shortcuts/tasks/npc
+
+cat > ~/.shortcuts/tasks/start-npc-onboot <<EOF
+#!/data/data/com.termux/files/usr/bin/sh
+cp ~/.shortcuts/tasks/npc ~/.termux/boot/npc
+rm ~/.shortcuts/tasks/npc
+EOF
