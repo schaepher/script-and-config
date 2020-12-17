@@ -22,18 +22,18 @@ mkdir -p ~/.shortcuts
 mkdir -p ~/.shortcuts/tasks
 
 # SSH 服务端
-echo """
+cat > ~/.shortcuts/tasks/sshd <<EOF
 #!/data/data/com.termux/files/usr/bin/sh
 termux-wake-lock
 sshd
-""" > ~/.shortcuts/tasks/sshd
+EOF
 
 # 开机自启动脚本。需要安装 Termux:Boot
 mkdir -p ~/.termux/boot
 
 # 安装到自启动
-echo """
+cat > ~/.shortcuts/tasks/start-sshd-onboot <<EOF
 #!/data/data/com.termux/files/usr/bin/sh
 cp ~/.shortcuts/tasks/sshd ~/.termux/boot/sshd
 rm ~/.shortcuts/tasks/sshd
-""" > ~/.shortcuts/tasks/start-sshd-onboot
+EOF
