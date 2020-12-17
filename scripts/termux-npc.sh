@@ -1,6 +1,6 @@
 #!/data/data/com.termux/files/usr/bin/sh
 
-basedir="~/npc"
+basedir=~/npc
 
 mkdir ${basedir}
 cd ${basedir}
