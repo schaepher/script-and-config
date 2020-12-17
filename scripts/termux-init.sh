@@ -34,6 +34,6 @@ mkdir -p ~/.termux/boot
 # 安装到自启动
 cat > ~/.shortcuts/tasks/start-sshd-onboot <<EOF
 #!/data/data/com.termux/files/usr/bin/sh
-mv ~/.shortcuts/tasks/sshd ~/.termux/boot/sshd
+cp ~/.shortcuts/tasks/sshd ~/.termux/boot/sshd
 rm ~/.shortcuts/tasks/start-sshd-onboot
 EOF
