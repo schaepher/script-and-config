@@ -49,6 +49,6 @@ sed -i "s/port/${port}/" ~/.shortcuts/tasks/npc
 
 cat > ~/.shortcuts/tasks/start-npc-onboot <<EOF
 #!/data/data/com.termux/files/usr/bin/sh
-cp ~/.shortcuts/tasks/npc ~/.termux/boot/npc
-rm ~/.shortcuts/tasks/npc
+mv ~/.shortcuts/tasks/npc ~/.termux/boot/npc
+rm ~/.shortcuts/tasks/start-npc-onboot
 EOF
