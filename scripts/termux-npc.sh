@@ -36,13 +36,13 @@ EOF
 sed -i "s/the_key/${key}/" ${basedir}/conf/npc.conf
 
 # nps 客户端
-cat > ~/.shortcuts/tasks/npc <<`EOF`
+cat > ~/.shortcuts/tasks/npc <<'EOF'
 #!/data/data/com.termux/files/usr/bin/sh
 termux-wake-lock
 ip=$(ping -c 1 domain  | head -n 1 | awk '{print $3}' | sed 's/[\(\)]//g')
-sed -i "s/^server_addr=.*\$/server_addr=${ip}:port/g" npc.conf
+sed -i "s/^server_addr=.*\$/server_addr=${ip}:port/g" ~/npc/conf/npc.conf
 ~/npc/npc -config ~/npc/conf/npc.conf
-`EOF`
+EOF
 
 sed -i "s/domain/${domain}/" ~/.shortcuts/tasks/npc
 sed -i "s/port/${port}/" ~/.shortcuts/tasks/npc
