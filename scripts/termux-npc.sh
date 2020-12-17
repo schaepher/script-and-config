@@ -51,3 +51,9 @@ cat > ~/.shortcuts/tasks/start-npc-onboot <<EOF
 cp ~/.shortcuts/tasks/npc ~/.termux/boot/npc
 rm ~/.shortcuts/tasks/start-npc-onboot
 EOF
+
+cat > ~/.shortcuts/tasks/stop-npc <<'EOF'
+#!/data/data/com.termux/files/usr/bin/sh
+target=npc.conf
+kill $(ps x | grep ${target} | grep -v grep | awk '{print $1}')
+EOF

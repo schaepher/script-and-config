@@ -27,6 +27,12 @@ cat > ~/.shortcuts/tasks/sshd <<EOF
 sshd
 EOF
 
+cat > ~/.shortcuts/tasks/stop-sshd <<'EOF'
+#!/data/data/com.termux/files/usr/bin/sh
+target=sshd
+kill $(ps x | grep ${target} | grep -v grep | grep -v bin | awk '{print $1}')
+EOF
+
 # 避免系统休眠
 cat > ~/.shortcuts/tasks/wakelock <<EOF
 #!/data/data/com.termux/files/usr/bin/sh
