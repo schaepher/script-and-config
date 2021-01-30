@@ -1,8 +1,7 @@
 #!/bin/bash
 
-curl -L -o scripts.zip https://github.com/schaepher/script-and-config/archive/main.zip 
-unzip scripts.zip
-rm scripts.zip
-mv script-and-config-main sac
-cd sac
+curl -L -o tool-kits.zip https://github.com/schaepher/tool-kits/archive/main.zip 
+unzip tool-kits.zip
+rm tool-kits.zip
+cd tool-kits-main
 chmod -R +x *.sh
