@@ -1,0 +1,60 @@
+#!/usr/bin/awk -f
+##==============================================================================
+## OpenWrt repository mirror script.
+## From https://openwrt.org/user/yeti/mirror-opkg-repositories
+##------------------------------------------------------------------------------
+## TODO:
+## - Delete packages not mentioned in the Packages file.
+## - Make local target path absolute.
+##==============================================================================
+BEGIN {
+        Dir["reboot_core"]      = "downloads.openwrt.org/snapshots/targets/bcm27xx/bcm2711/packages"
+        Dir["reboot_base"]      = "downloads.openwrt.org/snapshots/packages/aarch64_cortex-a72/base"
+        Dir["reboot_freifunk"]  = "downloads.openwrt.org/snapshots/packages/aarch64_cortex-a72/freifunk"
+        Dir["reboot_luci"]      = "downloads.openwrt.org/snapshots/packages/aarch64_cortex-a72/luci"
+        Dir["reboot_packages"]  = "downloads.openwrt.org/snapshots/packages/aarch64_cortex-a72/packages"
+        Dir["reboot_routing"]   = "downloads.openwrt.org/snapshots/packages/aarch64_cortex-a72/routing"
+        Dir["reboot_telephony"] = "downloads.openwrt.org/snapshots/packages/aarch64_cortex-a72/telephony"
+        for(Component in Dir) {
+                DestDir = Dir[Component]
+                BaseURL = "https://"DestDir
+                ##
+                ## make sure Destdir exists
+                ##
+                system("test -d "DestDir" || mkdir -p "DestDir)
+                ##
+                ## get Packages.gz, save it and unpack to Packages on the fly
+                ##
+                GetPackages = "cd "DestDir" && curl "BaseURL"/Packages.gz | tee Packages.gz | gzip -dc | tee Packages"
+
+                # 如果没有下载 sig 文件，则要将 /etc/opkg.conf 里的 【option check_signature】 注释掉
+                GetSig = "cd "DestDir" && curl -O "BaseURL"/Packages.sig"
+                GetAsc = "cd "DestDir" && curl -O "BaseURL"/Packages.asc"
+                GetMani = "cd "DestDir" && curl -O "BaseURL"/Packages.manifest"
+
+                GetIPKs     = "cd "DestDir" && xargs -P 5 -n 1 curl -C - -O "
+                ##
+                ## @@@todo@@@ add error checking here
+                ##
+                while( GetPackages | getline ) {
+                        if ( /^Filename: / )
+                                print BaseURL"/"$2 | GetIPKs
+                }
+
+                system( GetSig )
+                system( GetAsc )
+                system( GetMani )
+
+                close( GetPackages )
+                close( GetSig )
+                close( GetAsc )
+                close( GetMani )
+                close( GetIPKs )
+        }
+
+        Kmods = "downloads.openwrt.org/snapshots/targets/bcm27xx/bcm2711"
+        system("test -d "Kmods"/kmods || mkdir -p "Kmods"/kmods")
+        GetKmods = "cd "Kmods"/kmods; curl -s https://"Kmods"/openwrt-bcm27xx-bcm2711.manifest | grep kernel | awk '{print $3}' | xargs -I ver curl -O "Kmods"/kmods/ver"
+        system( GetKmods )
+        close( GetKmods )
+ }
