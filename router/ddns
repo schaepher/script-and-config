@@ -1,0 +1,32 @@
+#!/bin/bash
+
+force=""
+
+minute=$(date +%M)
+if [[ "${minute}" == "30" || "$1" == "force" ]]; then
+    force="true"
+    echo "force update"
+elif [[ "${minute:1}" != "0" && "${minute:1}" != "5" ]]; then
+    echo "minute: ${minute}, skip"
+    exit 0
+fi
+
+host="your-host"
+domain="your-domain.com"
+ddns_password="ddns-pass"
+full="${host}.${domain}"
+
+echo "get public ip..."
+ip=$(curl -s https://dynamicdns.park-your-domain.com/getip)
+echo "your public ip is: $ip"
+current_ip=$(ping -c 1 ${full} | head -n 2 | tail -n 1 | awk '{print $4}')
+if [[ "${current_ip}" == "${ip}" && "${force}" != "true" ]]; then
+    echo "ip is not changed, skip"
+    exit 0
+fi
+
+echo "updating ${ip} to ${full}"
+result=$(curl -s "https://dynamicdns.park-your-domain.com/update?host=${host}&domain=${domain}&password=${ddns_password}&ip=${ip}")
+echo "result:"
+echo "${result}" | xmllint  --format -
+echo "done"
